@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>HelloWorld</title>
+</head>
+<body>
+<form method="post" action="/hello">
+好きな文字を入力：<input type="text" name="text1" th:value="${text1_value}"/>
+<input type="submit" value="クリック"/>
+</form>
+</body>
+</html>
