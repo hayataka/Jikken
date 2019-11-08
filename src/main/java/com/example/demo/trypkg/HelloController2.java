@@ -14,36 +14,34 @@ import lombok.extern.slf4j.Slf4j;
 public class HelloController2 {
 	@Autowired
 	private HelloService helloService;
-	
-@GetMapping("/hello")
-public String getHello() {
-	return "hello";
-}
 
-@PostMapping("/hello")
-public String postRequest(@RequestParam("text1")String str,Model model) {
-	
-	String attributeValue = str+"さん";
-	model.addAttribute("sample",attributeValue);
-	log.info(str);
-	
-	return "helloResponse";
-}
+	@GetMapping("/hello")
 
+	public String getHello() {
+		return "hello";
+	}
 
+	@PostMapping("/hello")
+	public String postRequest(@RequestParam("text1") String str, Model model) {
 
+		String attributeValue = str + "さん";
+		model.addAttribute("sample", attributeValue);
+		log.info(str);
 
-@PostMapping("/hello/db")
-public String 
-postDbRequest(@RequestParam("text2")String str, Model model) {
-	int id = Integer.parseInt(str);
-	
-	Employee employee = helloService.findOne(id);
-	
-	model.addAttribute("id",employee.getEmployeeId());
-	model.addAttribute("name", employee.getEmployeeName());
-	model.addAttribute("age",employee.getAge());
-	
-	return "helloResponseDB";
-}
+		return "helloResponse";
+	}
+
+//	@RequestMapping("text/plain;charset=UTF-8")
+	@PostMapping("/hello/db")
+	public String postDbRequest(@RequestParam("text2") String str, Model model) {
+		int id = Integer.parseInt(str);
+
+		Employee employee = helloService.findOne(id);
+
+		model.addAttribute("id", employee.getEmployeeId());
+		model.addAttribute("name", employee.getEmployeeName());
+		model.addAttribute("age", employee.getAge());
+
+		return "helloResponseDB";
+	}
 }
