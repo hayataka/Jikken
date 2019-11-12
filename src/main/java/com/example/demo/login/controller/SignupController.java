@@ -4,10 +4,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,9 +27,10 @@ public class SignupController {
 
 	private Map<String, String> radioMarriage;
 
+	// ラジオボタンの初期化メソッド
 	private Map<String, String> initRadioMarriage() {
 		Map<String, String> radio = new LinkedHashMap<>();
-
+		// 既婚、未婚をMapに格納
 		radio.put("既婚", "true");
 		radio.put("未婚", "false");
 		return radio;
@@ -34,12 +38,15 @@ public class SignupController {
 
 	@GetMapping("/signup")
 	public String getSignUp(@ModelAttribute SignupForm form, Model model) {
+		// ラジオボタンの初期化メソッド呼び出し
 		radioMarriage = initRadioMarriage();
+		// ラジオボタン用のMapをModelに登録
 		model.addAttribute("radioMarriage", radioMarriage);
-
+		// signup.htmlに画面遷移
 		return "login/signup";
 	}
 
+	// ユーザー登録画面のPOSTメソッド用処理
 	@PostMapping("/signup")
 	public String postSignUp(@ModelAttribute @Validated(GroupOrder.class) SignupForm form, BindingResult bindingResult,
 			Model model) {
@@ -72,4 +79,16 @@ public class SignupController {
 		// login.htmlにリダイレクト
 		return "redirect:/login";
 	}
+
+	// DataAccessException発生時の処理メソッド
+	@ExceptionHandler(DataAccessException.class)
+	public String dataAccessExceptionHandler(DataAccessException e, Model model) {
+		// 例外クラスのメッセージをmodelに登録
+		model.addAttribute("error", "内部サーバーエラー（DB）：ExceptionHandler");
+		model.addAttribute("message", "SignupControllerでDataAccessExceptionが発生しました");
+		model.addAttribute("status", HttpStatus.INTERNAL_SERVER_ERROR);
+
+		return "error";
+	}
+
 }
