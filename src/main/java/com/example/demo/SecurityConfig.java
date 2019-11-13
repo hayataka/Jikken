@@ -17,7 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
+//パスワードエンコーダーのBean定義
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -36,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) {
 		// 静的リソースへのアクセスには、セキュリティを適用しない
-		web.ignoring().antMatchers("/webjars/**", "/css/**");
+		web.ignoring().antMatchers("/webjars/**", "/css/**", "/js/**");
 	}
 
 	@Override
@@ -44,7 +44,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		// ポイント３：直リンクの禁止
 		// ログイン不要ページの設定
 		http.authorizeRequests().antMatchers("/webjars/**").permitAll().antMatchers("/css/**").permitAll()
-				.antMatchers("/login").permitAll().antMatchers("/signup").permitAll().anyRequest().authenticated();
+				.antMatchers("/js/**").permitAll().antMatchers("/login").permitAll().antMatchers("/signup").permitAll()
+				.anyRequest().authenticated();
 
 		// ログイン処理
 		http.formLogin().loginProcessingUrl("/login").loginPage("/login").failureUrl("/login")
@@ -52,6 +53,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 		// CSRF対策を無効に設定
 		http.csrf().disable();
+
+		boolean alwaysUse = true;
+		http.formLogin().loginProcessingUrl("/login").loginPage("/login").failureUrl("/login")
+				.usernameParameter("userId").passwordParameter("password").defaultSuccessUrl("/home", alwaysUse);
+
 	}
 
 	@Override
